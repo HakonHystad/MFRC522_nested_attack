@@ -7,18 +7,19 @@
 **************************************************************************************************************/
 
 #include <iostream>
-#include "RC522.h"
+#include "MFrec.h"
 
 int main()
 {
  
     std::cout << "===================== MIFARE CRACK ====================\n"; 
-    RC522 com;
+    MFrec com;
     
     com.initCom();// blocking
 
     byte data[100]={0};
 
+    /*
     com.readBlock( 63, data, 100 );
 
     for( int i = 0; i<16; i++ )
@@ -27,7 +28,12 @@ int main()
     }
 
     std::cout << std::dec << std::endl;
+    */
 
+    com.crackKey( AUTHENT_A, 63, 6 );
+
+    com.stop();
+    
     return 0;
 
 }
