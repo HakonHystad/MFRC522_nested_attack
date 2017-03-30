@@ -201,7 +201,7 @@ bool RC522::anticollision()
 
     for( int i = 0; i<4; i++) p_uid[i] = pack[i];
 
-    //TODO: implement this in inherited class UID = bytesToInt( p_uid, 4 );
+    UID = bytesToInt( p_uid, 4 );
 
     return ( p_uid[0] != MSB( ANTICOLLISION ) );
 }
@@ -723,4 +723,26 @@ void RC522::calcCRC( byte *data, byte len, byte *CRC )//from libnfc/iso14443-sub
 
     *CRC++ = (uint8_t)(wCrc & 0xFF);
     *CRC = (uint8_t)((wCrc >> 8) & 0xFF);
+}
+
+
+/*=============================================================================================================
+
+NAME:                                             ~bytesToInt
+ARGUMENT(S): buffer to convert to int, number of bytes in buffer to convert
+DESCRIPTION: converts an array of bytes to an integer
+RETURN:
+
+==============================================================================================================*/
+
+uint64_t RC522::bytesToInt( byte *intBuffer, byte nrOfBytes )
+{
+    uint64_t nr = 0;
+
+    for( int i = 0; i<nrOfBytes; i++ )
+    {
+	nr = ( (nr<<8) | intBuffer[i] );// shift bytes upwards
+    }
+
+    return nr;
 }

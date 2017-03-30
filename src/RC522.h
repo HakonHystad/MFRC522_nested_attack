@@ -120,10 +120,8 @@ protected:
 
     void calcCRC( byte *data, byte len, byte *CRC);
 
-
     
-
-private:
+    uint64_t bytesToInt( byte *ntBuffer, byte nrOfBytes );
 
     uint32_t UID;
 
