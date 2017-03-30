@@ -23,7 +23,7 @@ All code is written by me except for the crapto1/crypto1 library, although based
 
 I could find very little mention of using the RC522 solely as a transceiver (sending and receiving raw frames), but a note in its datasheet mentioning turning off parity hints at the possibility. Turns out that it is possible sending little endian frames with parity after every 8th bit and a CRC16 checksum appended at the end to the FIFO buffer. The trick is to turn of every register bit that does something for you automatically as well as handeling arbitrary bitlength. This was a lot trickier to figure out than it sounds.
 
-The key recovery as implemented by me used (on a 150 sample average) 114 seconds to go through one iteration (with 5 recoveries) on the raspberry pi 3 (1.2GHz). By threading the recovery process where possible (locking the parts accessing hardware with a mutex) I managed to get it down to 56 seconds: nearly a 51% reduction.
+The key recovery as implemented by me used (on a 150 sample average) 114 seconds to go through one iteration (with 5 recoveries) on the raspberry pi 3 (1.2GHz). By threading the recovery process where possible (locking the parts accessing hardware with a mutex) I managed to get it down to 25 seconds: nearly a 71% reduction.
 
 THE INTERFACE:
 
@@ -31,4 +31,4 @@ As a school project I also made a minimalist webpage to display the results, upd
 
 RESULTS:
 
-A regular mifare classic 1k card has a sector key cracked within the first iteration (i.e 56s on average with 5 recoveries) as long as one of its sectors uses the default (or other know) key. The results are displayed in "real time" on my self made webpage when reading a card. As for my student ID; it does not seem to utilize the vulnarable RNG and is most likely an emulated mifare classic 1k, this attack has no effect on it. 
+A regular mifare classic 1k card has a sector key cracked within the first iteration (i.e 25s on average with 5 recoveries) as long as one of its sectors uses the default (or other know) key. The results are displayed in "real time" on my self made webpage when reading a card. As for my student ID; it does not seem to utilize the vulnarable RNG and is most likely an emulated mifare classic 1k, this attack has no effect on it. 
