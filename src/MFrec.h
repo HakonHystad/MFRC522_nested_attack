@@ -42,7 +42,7 @@ Section:                                          ~literals and configs
 /* change these to specify recovering parameters */
 #define DIST_NR		15// how many distances taken to find median
 #define TOLERANCE	20// accuracy of distance
-#define PROBE_NR	150// how many times we try to find key
+#define PROBE_NR	1// how many times we try to find key
 #define SETS_NR		5// how many times we try recovering each probe
 
 typedef uint8_t byte;
@@ -85,7 +85,7 @@ public:
 
     /*-------------------------------------- key recovery  ---------------------------------------*/
 
-    void crackKey( byte command, byte blockAddr_e, byte blockAddr_a, byte *key = nullptr );// helper function
+    bool crackKey( byte command, byte blockAddr_e, byte blockAddr_a, byte *key = nullptr );
 
 protected:
 

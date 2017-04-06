@@ -59,7 +59,7 @@ RETURN:
 ==============================================================================================================*/
 
 
-void MFrec::crackKey( byte command, byte blockAddr_e, byte blockAddr_a, byte *key /*= nullptr*/ )
+bool MFrec::crackKey( byte command, byte blockAddr_e, byte blockAddr_a, byte *key /*= nullptr*/ )
 {
 #if RC522_DBG
     std::cout << "crackKey\n";
@@ -83,11 +83,14 @@ void MFrec::crackKey( byte command, byte blockAddr_e, byte blockAddr_a, byte *ke
     if( ( pthread_mutex_init( &m_lock, NULL ) ) != 0 )
     {
 	std::cerr << "Error initializing mutex\n";
-	return;
+	return false;
     }
 
 
     const int delayTime = 10;
+
+    resetPICC( delayTime );
+    initCom();
 
     
     /*-------------------------------------- RECOVERY LOOP  ---------------------------------------*/
@@ -129,6 +132,7 @@ void MFrec::crackKey( byte command, byte blockAddr_e, byte blockAddr_a, byte *ke
 
        
 
+	/*-------------------------------------- sort and find duplicates  ---------------------------------------*/
 	/*
 	 * we should now have found a good amount of possible keys having 32 bits correct, now we sort
 	 * them and find a good cluster of equal keys
@@ -177,6 +181,8 @@ void MFrec::crackKey( byte command, byte blockAddr_e, byte blockAddr_a, byte *ke
 	std::cout << "<" << elapsed << ">" << "Round " << probe+1 << ": Found " << allKeys.size()
 		  << " possible keys, with most repeated key: " << maxCount << std::endl;
 
+
+	/*-------------------------------------- try likely keys  ---------------------------------------*/
 	   
 	for( int d = 9; d>=0; d-- )
 	{
@@ -207,13 +213,22 @@ void MFrec::crackKey( byte command, byte blockAddr_e, byte blockAddr_a, byte *ke
 			  << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"
 			  << "Time to crack: " << totalElapsed << std::endl;
 
+		for( int i = 0; i<6; i++ )//store it
+		{
+		    p_keys[blockAddr_a/4][i] = plausibleKey[i];
+		}
+
 		// clean up
 		pthread_mutex_destroy(&m_lock);
 		for( int sets = 0; sets>SETS_NR; sets++ )
 		{
 		    possibleKeys[sets].clear();
 		}
-		return;
+
+		
+		resetPICC( delayTime );
+		parityOn();
+		return true;
 	    }
 	    
 	    #if RC522_WIRE
@@ -237,6 +252,9 @@ void MFrec::crackKey( byte command, byte blockAddr_e, byte blockAddr_a, byte *ke
     pthread_mutex_destroy(&m_lock);
     std::cout << "Could not find key, time elapsed: " << totalElapsed << std::endl;
 
+    resetPICC( delayTime );
+    parityOn();
+    return false;
 }// crackKey
 
 /*#############################################################################################################

@@ -46,9 +46,17 @@ RC522::RC522()
     {
 	for( int bytePos = 0; bytePos<6; bytePos++ )
 	{
-	    p_keys[sector][bytePos] = 0xFF;// fill with default key
+	    if( sector == 10 || sector == 11 )//for testing
+	    {
+		p_keys[sector][bytePos] = 0x01;
+	    }
+	    else
+	    {
+		p_keys[sector][bytePos] = 0xFF;// fill with default key
+	    }
 	}
     }
+
 
     
 #if RC522_WIRE
@@ -371,13 +379,13 @@ bool RC522::readBlock( byte blockAddr, byte *data, byte len )
 	return false;
     }
 
-    if( currentlyAuthenticated != blockAddr/4 )// if block is not in currently open sector
-    {
+//    if( currentlyAuthenticated != blockAddr/4 )// if block is not in currently open sector
+	  //  {
 	if( !authenticateOnChip( AUTHENT_A, blockAddr) )// authenticate it
 	{
 	    return false;
 	}
-    }
+	//}
 
     data[0] = MF_READ;
     data[1] = blockAddr;
