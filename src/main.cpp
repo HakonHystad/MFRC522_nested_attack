@@ -6,30 +6,13 @@
 ***************************************************************************************************************
 **************************************************************************************************************/
 
-#include <iostream>
 #include "MFrec.h"
 
 int main()
 {
  
-    std::cout << "===================== MIFARE CRACK ====================\n"; 
     MFrec com;
     
-    com.initCom();// blocking
-
-    byte data[100]={0};
-
-    /*
-    com.readBlock( 63, data, 100 );
-
-    for( int i = 0; i<16; i++ )
-    {
-	std::cout << std::hex << (int)data[i] << " ";
-    }
-
-    std::cout << std::dec << std::endl;
-    */
-
     com.crackKey( AUTHENT_A, 63, 6 );
 
     com.stop();
